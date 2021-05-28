@@ -5,11 +5,11 @@ import cv2
 import numpy as np
 import hand_tracking as htm
 import time
-import autopy
+import pyautogui
 
 ##########################
 wCam, hCam = 640, 480
-frameR = 500 # 100 # Frame Reduction
+frameR = 100 # 100 # Frame Reduction
 smoothening = 7
 #########################
 
@@ -21,12 +21,15 @@ cap = cv2.VideoCapture(0) # this can be changed to a higher number for a differe
 cap.set(3, wCam)
 cap.set(4, hCam)
 detector = htm.handDetector(maxHands=1)
-wScr, hScr = autopy.screen.size()
+wScr, hScr = pyautogui.size()
 # print(wScr, hScr)
 
 while True:
     # 1. Find hand Landmarks
     success, img = cap.read()
+    if not success:
+      continue
+
     img = detector.findHands(img)
     lmList, bbox = detector.findPosition(img)
     # 2. Get the tip of the index and middle fingers
@@ -52,8 +55,9 @@ while True:
         clocY = plocY + (y3 - plocY) / smoothening
     
         # 7. Move Mouse
-        autopy.mouse.move(wScr - clocX, clocY)
-        print("MOVING MOUSE!!")
+        pyautogui.moveTo(wScr - clocX, clocY)
+
+        print("MOVING MOUSE!!", wScr - clocX, clocY)
         cv2.circle(img, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
         plocX, plocY = clocX, clocY
         
@@ -66,7 +70,7 @@ while True:
         if length < 40:
             cv2.circle(img, (lineInfo[4], lineInfo[5]),
             15, (0, 255, 0), cv2.FILLED)
-            autopy.mouse.click()
+            pyautogui.click()
     
     # 11. Frame Rate
     cTime = time.time()
