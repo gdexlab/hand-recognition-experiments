@@ -30,15 +30,13 @@ with mp_hands.Hands(
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-    time_since_start = time.time()
-    now = time.time()
     if results.multi_hand_landmarks:
 
       for hand_landmarks in results.multi_hand_landmarks:
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
       if counter%20 == 0:
-        print(results)
+        print(results.multi_hand_landmarks)
 
 
     cv2.imshow('MediaPipe Hands', image)
